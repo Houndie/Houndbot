@@ -7,12 +7,25 @@ var sqlite3 = require(keys.NODE_LOC + "/node-sqlite3/sqlite3");
 var db = new sqlite3.Database(keys.DATABASE_LOC);
 
 bot.on('endsong', function(data) {
-   var Query1 = "INSERT OR IGNORE INTO users (id, score) VALUES ('" + 
+   var Query1 = "INSERT OR IGNORE INTO users (id, score, banned) VALUES ('" + 
                 data.room.metadata.current_dj + "', " + data.room.metadata.upvotes + 
-                ");";
+                ", false);";
    var Query2 = "UPDATE users SET score = score + " + data.room.metadata.upvotes + 
                 " WHERE id = '" + data.room.metadata.current_dj + "';"
    db.exec(Query1 + Query2);
+});
+
+bot.on('registered', function(data){
+   for(i = 0; i < data.user.length; i++){
+      var Query = "SELECT banned FROM users WHERE id = '" + data.user[0].userid + "';";
+      db.get(Query, function(err, sqldata){
+         if(typeof(sqldata) != "undefined"){
+            if(sqldata.banned){
+               bot.bootUser(data.user[0].userid,"");
+            }
+         }
+      });
+   }
 });
 
 bot.on('speak', function (data) {
@@ -83,5 +96,28 @@ bot.on('speak', function (data) {
             bot.speak(data.name + ", you have no points from this room");
       });
    }
+   if(text.substring(0, 12).toLowerCase() == "houndbot ban"){
+      bot.roomInfo(false, function(roomInfo){
+         if(roomInfo.room.metadata.moderator_id.indexOf(data.userid) != -1){
+            //Moderator is speaking, add to ban list
+            var idx = 0;
+            for(; idx < roomInfo.users.length && 
+                roomInfo.users[idx].name.toLowerCase() != text.substring(12).replace(/\s/g, "").toLowerCase(); idx++);
+            console.log(text.substring(12).replace(/\s/g, "").toLowerCase());
+            console.log(JSON.stringify(roomInfo.users));
+            console.log(idx);
+            if(idx < roomInfo.users.length){
+               var Query1 = "INSERT OR IGNORE INTO users (id, banned) VALUES ('" + 
+                              roomInfo.users[idx].userid + "', 1);";
+               var Query2 = "UPDATE users SET banned = 1 WHERE id = '" +
+                              roomInfo.users[idx].userid + "';";
+               console.log(" " + Query1 + Query2);
+               db.exec(Query1 + Query2);
+               bot.bootUser(roomInfo.users[idx].userid, "");
+            }
+         }
+      });
+   }
+            
       
 });
