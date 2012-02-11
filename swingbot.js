@@ -103,15 +103,11 @@ bot.on('speak', function (data) {
             var idx = 0;
             for(; idx < roomInfo.users.length && 
                 roomInfo.users[idx].name.toLowerCase() != text.substring(12).replace(/\s/g, "").toLowerCase(); idx++);
-            console.log(text.substring(12).replace(/\s/g, "").toLowerCase());
-            console.log(JSON.stringify(roomInfo.users));
-            console.log(idx);
             if(idx < roomInfo.users.length){
                var Query1 = "INSERT OR IGNORE INTO users (id, banned) VALUES ('" + 
                               roomInfo.users[idx].userid + "', 1);";
                var Query2 = "UPDATE users SET banned = 1 WHERE id = '" +
                               roomInfo.users[idx].userid + "';";
-               console.log(" " + Query1 + Query2);
                db.exec(Query1 + Query2);
                bot.bootUser(roomInfo.users[idx].userid, "");
             }
