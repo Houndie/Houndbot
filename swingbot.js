@@ -7,9 +7,9 @@ var sqlite3 = require(keys.NODE_LOC + "/node-sqlite3/sqlite3");
 var db = new sqlite3.Database(keys.DATABASE_LOC);
 
 bot.on('endsong', function(data) {
-   var Query1 = "INSERT OR IGNORE INTO users (id, score, banned) VALUES ('" + 
+   var Query1 = "INSERT OR IGNORE INTO users (id, score) VALUES ('" + 
                 data.room.metadata.current_dj + "', " + data.room.metadata.upvotes + 
-                ", false);";
+                ");";
    var Query2 = "UPDATE users SET score = score + " + data.room.metadata.upvotes + 
                 " WHERE id = '" + data.room.metadata.current_dj + "';"
    db.exec(Query1 + Query2);
