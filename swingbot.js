@@ -36,11 +36,11 @@ bot.on('speak', function (data) {
    //Let Hounddog turn notifications on and off
    if(text.toLowerCase() == "houndbot dj on"){
       bot.roomInfo(function(data){
-         if(data.room.metadata.djs[0] != USERID &&
-            data.room.metadata.djs[1] != USERID &&
-            data.room.metadata.djs[2] != USERID &&
-            data.room.metadata.djs[3] != USERID &&
-            data.room.metadata.djs[4] != USERID){
+         if(data.room.metadata.djs[0] != keys.USERID &&
+            data.room.metadata.djs[1] != keys.USERID &&
+            data.room.metadata.djs[2] != keys.USERID &&
+            data.room.metadata.djs[3] != keys.USERID &&
+            data.room.metadata.djs[4] != keys.USERID){
 	    bot.addDj(function (dummy){
 	       bot.speak("DJing for you!  Type \'Houndbot DJ off\' to make me stop, or \'Houndbot skip\' if you don't like my song.");
 	    });
@@ -49,12 +49,12 @@ bot.on('speak', function (data) {
    }
    if(text.toLowerCase() == "houndbot dj off"){
       bot.roomInfo(function(data){
-         if(data.room.metadata.djs[0] == USERID ||
-            data.room.metadata.djs[1] == USERID ||
-            data.room.metadata.djs[2] == USERID ||
-            data.room.metadata.djs[3] == USERID ||
-            data.room.metadata.djs[4] == USERID){
-	    bot.remDj(USERID, function (dummy){
+         if(data.room.metadata.djs[0] == keys.USERID ||
+            data.room.metadata.djs[1] == keys.USERID ||
+            data.room.metadata.djs[2] == keys.USERID ||
+            data.room.metadata.djs[3] == keys.USERID ||
+            data.room.metadata.djs[4] == keys.USERID){
+	    bot.remDj(keys.USERID, function (dummy){
 	       bot.speak("Stepping down.");
 	    });
          }
@@ -62,11 +62,11 @@ bot.on('speak', function (data) {
    }
    if(text.toLowerCase() == "houndbot skip"){
       bot.roomInfo(function(data){
-         if(data.room.metadata.djs[0] == USERID ||
-            data.room.metadata.djs[1] == USERID ||
-            data.room.metadata.djs[2] == USERID ||
-            data.room.metadata.djs[3] == USERID ||
-            data.room.metadata.djs[4] == USERID){
+         if(data.room.metadata.djs[0] == keys.USERID ||
+            data.room.metadata.djs[1] == keys.USERID ||
+            data.room.metadata.djs[2] == keys.USERID ||
+            data.room.metadata.djs[3] == keys.USERID ||
+            data.room.metadata.djs[4] == keys.USERID){
 	    bot.skip(function (dummy){
 	       bot.speak("Skipping song.");
 	    });
@@ -82,6 +82,7 @@ bot.on('speak', function (data) {
       text.toLowerCase() == "houndbot shimsham" ||
       text.toLowerCase() == "houndbot swingout" ||
       text.toLowerCase() == "houndbot california routine" ||
+      text.toLowerCase() == "houndbot shake that thing" ||
       text.toLowerCase() == "houndbot bust a move"){
       bot.vote('up');
    }
