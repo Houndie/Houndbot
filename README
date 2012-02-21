@@ -1,0 +1,19 @@
+INSTALL INSTRUCTIONS
+
+This bot uses node.js, so please install that first.
+
+This bot uses two API's that need to be installed:
+https://github.com/alaingilbert/Turntable-API
+https://github.com/developmentseed/node-sqlite3
+
+Make sure you follow all installation instructions.  It is useful if you have them both installed into the same folder, if you're not using npm (The author of this bot did not use npm, so he's not very familiar with the procedure).
+
+After installing these API's, git the source for the bot.  Rename example-keys.js to keys.js, and fill out the relevant information:
+
+AUTH, USERID, ROOMID:  Can be determined with this applet:  alaingilbert.github.com/Turntable-API/bookmarklet.html
+DATABASE_LOC:  The absolute path to an sqlite3 database.
+NODE_LOC:  The location of the two above apis.
+
+The bot can be run with:
+
+node swingbot.js
