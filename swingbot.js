@@ -9,12 +9,7 @@ var db = new sqlite3.Database(keys.DATABASE_LOC);
 bot.isDj = function() {
     var result = false;
     this.roomInfo(function(data) {
-        if (data.room.metadata.djs[0] == keys.USERID ||
-            data.room.metadata.djs[1] == keys.USERID ||
-            data.room.metadata.djs[2] == keys.USERID ||
-            data.room.metadata.djs[3] == keys.USERID ||
-            data.room.metadata.djs[4] == keys.USERID )
-        {
+        if (data.room.metadata.djs.indexOf(keys.USERID) != -1) {
             result = true;
         }
     });
