@@ -6,6 +6,22 @@ var bot = new Bot(keys.AUTH, keys.USERID, keys.ROOMID);
 var sqlite3 = require(keys.NODE_LOC + "/node-sqlite3/sqlite3");
 var db = new sqlite3.Database(keys.DATABASE_LOC);
 
+bot.isDj = function() {
+    var result = false;
+    this.roomInfo(function(data) {
+        if (data.room.metadata.djs[0] == keys.USERID ||
+            data.room.metadata.djs[1] == keys.USERID ||
+            data.room.metadata.djs[2] == keys.USERID ||
+            data.room.metadata.djs[3] == keys.USERID ||
+            data.room.metadata.djs[4] == keys.USERID )
+        {
+            result = true;
+        }
+    });
+
+    return result;
+};
+
 bot.on('endsong', function(data) {
    var Query1 = "INSERT OR IGNORE INTO users (id, score) VALUES ('" + 
                 data.room.metadata.current_dj + "', " + data.room.metadata.upvotes + 
@@ -35,43 +51,25 @@ bot.on('speak', function (data) {
 
    //Let Hounddog turn notifications on and off
    if(text.toLowerCase() == "houndbot dj on"){
-      bot.roomInfo(function(data){
-         if(data.room.metadata.djs[0] != keys.USERID &&
-            data.room.metadata.djs[1] != keys.USERID &&
-            data.room.metadata.djs[2] != keys.USERID &&
-            data.room.metadata.djs[3] != keys.USERID &&
-            data.room.metadata.djs[4] != keys.USERID){
-	    bot.addDj(function (dummy){
+       if (!bot.isDj()) {
+	     bot.addDj(function (dummy){
 	       bot.speak("DJing for you!  Type \'Houndbot DJ off\' to make me stop, or \'Houndbot skip\' if you don't like my song.");
-	    });
-         }
-      });
+	     });
+       }
    }
    if(text.toLowerCase() == "houndbot dj off"){
-      bot.roomInfo(function(data){
-         if(data.room.metadata.djs[0] == keys.USERID ||
-            data.room.metadata.djs[1] == keys.USERID ||
-            data.room.metadata.djs[2] == keys.USERID ||
-            data.room.metadata.djs[3] == keys.USERID ||
-            data.room.metadata.djs[4] == keys.USERID){
+      if (bot.isDj()) {
 	    bot.remDj(keys.USERID, function (dummy){
 	       bot.speak("Stepping down.");
 	    });
-         }
-      });
+      }
    }
    if(text.toLowerCase() == "houndbot skip"){
-      bot.roomInfo(function(data){
-         if(data.room.metadata.djs[0] == keys.USERID ||
-            data.room.metadata.djs[1] == keys.USERID ||
-            data.room.metadata.djs[2] == keys.USERID ||
-            data.room.metadata.djs[3] == keys.USERID ||
-            data.room.metadata.djs[4] == keys.USERID){
+      if (bot.isDj()) {
 	    bot.skip(function (dummy){
 	       bot.speak("Skipping song.");
 	    });
-         }
-      });
+      }
    }
    if(text.toLowerCase() == "houndbot help"){
       bot.speak("AVAILABLE COMMANDS:  \'Houndbot DJ on\', \'Houndbot DJ off\', \'Houndbot skip\'," +
