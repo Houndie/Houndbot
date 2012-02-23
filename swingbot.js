@@ -45,43 +45,51 @@ bot.on('speak', function (data) {
    var name = data.name;
    var text = data.text.toLowerCase();
 
+   if (text.match(/^houndbot/)) {
+       var command = text.replace(/^houndbot\s+/, '');
+
    //Let Hounddog turn notifications on and off
-   if(text == "houndbot dj on"){
+   if(command == "dj on"){
        if (!bot.isDj()) {
 	     bot.addDj(function (dummy){
 	       bot.speak("DJing for you!  Type \'Houndbot DJ off\' to make me stop, or \'Houndbot skip\' if you don't like my song.");
 	     });
        }
    }
-   if(text == "houndbot dj off"){
+
+   if(command == "dj off"){
       if (bot.isDj()) {
 	    bot.remDj(keys.USERID, function (dummy){
 	       bot.speak("Stepping down.");
 	    });
       }
    }
-   if(text == "houndbot skip"){
+
+   if(command == "skip"){
       if (bot.isDj()) {
 	    bot.skip(function (dummy){
 	       bot.speak("Skipping song.");
 	    });
       }
    }
-   if(text == "houndbot help"){
+
+   if(command == "help"){
       bot.speak("AVAILABLE COMMANDS:  \'Houndbot DJ on\', \'Houndbot DJ off\', \'Houndbot skip\'," +
                 "\'Houndbot dance\', \'Houndbot mystats\'");
    }
-   if(text == "houndbot dance" ||
-      text == "houndbot shim sham" ||
-      text == "houndbot shimsham" ||
-      text == "houndbot swingout" ||
-      text == "houndbot california routine" ||
-      text == "houndbot shake that thing" ||
-      text == "houndbot bust a move"){
+
+   if(command == "dance" ||
+      command == "shim sham" ||
+      command == "shimsham" ||
+      command == "swingout" ||
+      command == "california routine" ||
+      command == "shake that thing" ||
+      command == "bust a move"){
       bot.vote('up');
    }
-   if(text == "houndbot my stats" ||
-      text == "houndbot mystats"){
+
+   if(command == "my stats" ||
+      command == "mystats"){
       //Query for user
       db.get("SELECT score FROM users WHERE id = '" + data.userid + "';", function(err, sqldata){
          if(typeof(sqldata)!='undefined'){
@@ -91,13 +99,16 @@ bot.on('speak', function (data) {
             bot.speak(data.name + ", you have no points from this room");
       });
    }
-   if(text.substring(0, 12) == "houndbot ban"){
+
+   if(command.match(/^ban /)){
+      var ban_username = command.replace(/^ban\s+/, '').replace(/\s/g, '');
+
       bot.roomInfo(false, function(roomInfo){
          if(roomInfo.room.metadata.moderator_id.indexOf(data.userid) != -1){
             //Moderator is speaking, add to ban list
             var idx = 0;
             for(; idx < roomInfo.users.length && 
-                roomInfo.users[idx].name.toLowerCase() != text.substring(12).replace(/\s/g, ""); idx++);
+                roomInfo.users[idx].name.toLowerCase() != ban_username; idx++);
             if(idx < roomInfo.users.length){
                var Query1 = "INSERT OR IGNORE INTO users (id, banned) VALUES ('" + 
                               roomInfo.users[idx].userid + "', 1);";
@@ -109,6 +120,6 @@ bot.on('speak', function (data) {
          }
       });
    }
-            
-      
+
+   }
 });
