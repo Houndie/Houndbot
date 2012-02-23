@@ -6,14 +6,14 @@ var bot = new Bot(keys.AUTH, keys.USERID, keys.ROOMID);
 var sqlite3 = require(keys.NODE_LOC + "/node-sqlite3/sqlite3");
 var db = new sqlite3.Database(keys.DATABASE_LOC);
 
-Array.prototype.include = function(element) {
+Array.prototype.includes = function(element) {
     return this.indexOf(element) != -1;
 };
 
 bot.isDj = function() {
     var result = false;
     this.roomInfo(function(data) {
-        if (data.room.metadata.djs.include(keys.USERID)) {
+        if (data.room.metadata.djs.includes(keys.USERID)) {
             result = true;
         }
     });
@@ -82,11 +82,11 @@ bot.on('speak', function (data) {
                 "\'Houndbot dance\', \'Houndbot mystats\'");
    }
 
-   if(['dance', 'shim sham', 'shimsham', 'swingout', 'california routine', 'shake that thing', 'bust a move'].include(command)){
+   if(['dance', 'shim sham', 'shimsham', 'swingout', 'california routine', 'shake that thing', 'bust a move'].includes(command)){
       bot.vote('up');
    }
 
-   if(['mystats', 'my stats'].include(command)){
+   if(['mystats', 'my stats'].includes(command)){
       //Query for user
       db.get("SELECT score FROM users WHERE id = '" + data.userid + "';", function(err, sqldata){
          if(typeof(sqldata)!='undefined'){
@@ -101,7 +101,7 @@ bot.on('speak', function (data) {
       var ban_username = command.replace(/^ban\s+/, '').replace(/\s/g, '');
 
       bot.roomInfo(false, function(roomInfo){
-         if(roomInfo.room.metadata.moderator_id.include(data.userid)){
+         if(roomInfo.room.metadata.moderator_id.includes(data.userid)){
             //Moderator is speaking, add to ban list
             var idx = 0;
             for(; idx < roomInfo.users.length && 
