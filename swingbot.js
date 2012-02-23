@@ -33,7 +33,7 @@ bot.on('registered', function(data){
       db.get(Query, function(err, sqldata){
          if(typeof(sqldata) != "undefined"){
             if(sqldata.banned){
-               bot.bootUser(data.user[0].userid,"");
+               bot.bootUser(data.user[0].userid, "Banned");
             }
          }
       });
@@ -104,7 +104,7 @@ bot.on('speak', function (data) {
                var Query2 = "UPDATE users SET banned = 1 WHERE id = '" +
                               roomInfo.users[idx].userid + "';";
                db.exec(Query1 + Query2);
-               bot.bootUser(roomInfo.users[idx].userid, "");
+               bot.bootUser(roomInfo.users[idx].userid, "Banned");
             }
          }
       });
