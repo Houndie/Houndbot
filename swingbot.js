@@ -17,6 +17,7 @@ bot.isDj = function() {
     return result;
 };
 
+
 bot.on('endsong', function(data) {
    var Query1 = "INSERT OR IGNORE INTO users (id, score) VALUES ('" + 
                 data.room.metadata.current_dj + "', " + data.room.metadata.upvotes + 
@@ -42,45 +43,45 @@ bot.on('registered', function(data){
 bot.on('speak', function (data) {
    // Get the data
    var name = data.name;
-   var text = data.text;
+   var text = data.text.toLowerCase();
 
    //Let Hounddog turn notifications on and off
-   if(text.toLowerCase() == "houndbot dj on"){
+   if(text == "houndbot dj on"){
        if (!bot.isDj()) {
 	     bot.addDj(function (dummy){
 	       bot.speak("DJing for you!  Type \'Houndbot DJ off\' to make me stop, or \'Houndbot skip\' if you don't like my song.");
 	     });
        }
    }
-   if(text.toLowerCase() == "houndbot dj off"){
+   if(text == "houndbot dj off"){
       if (bot.isDj()) {
 	    bot.remDj(keys.USERID, function (dummy){
 	       bot.speak("Stepping down.");
 	    });
       }
    }
-   if(text.toLowerCase() == "houndbot skip"){
+   if(text == "houndbot skip"){
       if (bot.isDj()) {
 	    bot.skip(function (dummy){
 	       bot.speak("Skipping song.");
 	    });
       }
    }
-   if(text.toLowerCase() == "houndbot help"){
+   if(text == "houndbot help"){
       bot.speak("AVAILABLE COMMANDS:  \'Houndbot DJ on\', \'Houndbot DJ off\', \'Houndbot skip\'," +
                 "\'Houndbot dance\', \'Houndbot mystats\'");
    }
-   if(text.toLowerCase() == "houndbot dance" ||
-      text.toLowerCase() == "houndbot shim sham" ||
-      text.toLowerCase() == "houndbot shimsham" ||
-      text.toLowerCase() == "houndbot swingout" ||
-      text.toLowerCase() == "houndbot california routine" ||
-      text.toLowerCase() == "houndbot shake that thing" ||
-      text.toLowerCase() == "houndbot bust a move"){
+   if(text == "houndbot dance" ||
+      text == "houndbot shim sham" ||
+      text == "houndbot shimsham" ||
+      text == "houndbot swingout" ||
+      text == "houndbot california routine" ||
+      text == "houndbot shake that thing" ||
+      text == "houndbot bust a move"){
       bot.vote('up');
    }
-   if(text.toLowerCase() == "houndbot my stats" ||
-      text.toLowerCase() == "houndbot mystats"){
+   if(text == "houndbot my stats" ||
+      text == "houndbot mystats"){
       //Query for user
       db.get("SELECT score FROM users WHERE id = '" + data.userid + "';", function(err, sqldata){
          if(typeof(sqldata)!='undefined'){
@@ -90,13 +91,13 @@ bot.on('speak', function (data) {
             bot.speak(data.name + ", you have no points from this room");
       });
    }
-   if(text.substring(0, 12).toLowerCase() == "houndbot ban"){
+   if(text.substring(0, 12) == "houndbot ban"){
       bot.roomInfo(false, function(roomInfo){
          if(roomInfo.room.metadata.moderator_id.indexOf(data.userid) != -1){
             //Moderator is speaking, add to ban list
             var idx = 0;
             for(; idx < roomInfo.users.length && 
-                roomInfo.users[idx].name.toLowerCase() != text.substring(12).replace(/\s/g, "").toLowerCase(); idx++);
+                roomInfo.users[idx].name.toLowerCase() != text.substring(12).replace(/\s/g, ""); idx++);
             if(idx < roomInfo.users.length){
                var Query1 = "INSERT OR IGNORE INTO users (id, banned) VALUES ('" + 
                               roomInfo.users[idx].userid + "', 1);";
