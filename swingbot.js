@@ -44,19 +44,23 @@ bot.on('registered', function(data){
    }
 });
 
+bot.name = 'Houndbot';
+
 bot.on('speak', function (data) {
    // Get the data
    var name = data.name;
    var text = data.text.toLowerCase();
 
-   if (text.match(/^houndbot/)) {
-       var command = text.replace(/^houndbot\s+/, '');
+   var name_pattern = '^' + bot.name.toLowerCase();
+
+   if (text.match(new RegExp(name_pattern))) {
+       var command = text.replace(new RegExp(name_pattern + '\\s+'), '');
 
    //Let Hounddog turn notifications on and off
    if(command == "dj on"){
        if (!bot.isDj()) {
 	     bot.addDj(function (dummy){
-	       bot.speak("DJing for you!  Type \'Houndbot DJ off\' to make me stop, or \'Houndbot skip\' if you don't like my song.");
+	       bot.speak("DJing for you!  Type \'" + bot.name + " DJ off\' to make me stop, or \'" + bot.name + " skip\' if you don't like my song.");
 	     });
        }
    }
@@ -78,8 +82,8 @@ bot.on('speak', function (data) {
    }
 
    if(command == "help"){
-      bot.speak("AVAILABLE COMMANDS:  \'Houndbot DJ on\', \'Houndbot DJ off\', \'Houndbot skip\'," +
-                "\'Houndbot dance\', \'Houndbot mystats\'");
+      bot.speak("AVAILABLE COMMANDS:  \'" + bot.name + " DJ on\', \'" + bot.name + " DJ off\', \'" + bot.name + " skip\'," +
+                "\'" + bot.name + " dance\', \'" + bot.name + " mystats\'");
    }
 
    if(['dance', 'shim sham', 'shimsham', 'swingout', 'california routine', 'shake that thing', 'bust a move'].includes(command)){
