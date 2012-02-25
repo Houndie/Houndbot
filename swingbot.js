@@ -45,6 +45,11 @@ bot.on('registered', function(data){
 });
 
 bot.name = 'Houndbot';
+bot.on('ready', function(data) {
+    bot.userInfo(function(data) {
+        bot.name = data.name;
+    });
+});
 
 bot.on('speak', function (data) {
    // Get the data
