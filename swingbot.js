@@ -21,6 +21,11 @@ bot.isDj = function() {
     return result;
 };
 
+bot.on('ready', function(data) {
+   var Query = "CREATE TABLE IF NOT EXISTS users (id VARCHAR(50) PRIMARY KEY, " +
+               "score INT DEFAULT 0, banned BOOLEAN DEFAULT 0)";
+   db.run(Query);
+});
 
 bot.on('endsong', function(data) {
    var Query1 = "INSERT OR IGNORE INTO users (id, score) VALUES ('" + 
