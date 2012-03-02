@@ -10,15 +10,13 @@ Array.prototype.contains = function(element) {
     return this.indexOf(element) != -1;
 };
 
-bot.isDj = function() {
+
+//TODO combine into one if possible
+bot.isDj = function(callback) {
     var result = false;
     this.roomInfo(function(data) {
-        if (data.room.metadata.djs.contains(keys.USERID)) {
-            result = true;
-        }
+        callback(data.room.metadata.djs.contains(keys.USERID));
     });
-
-    return result;
 };
 
 bot.on('ready', function(data) {
@@ -59,27 +57,33 @@ bot.on('speak', function (data) {
 
    //Let Hounddog turn notifications on and off
    if(command == "dj on"){
-       if (!bot.isDj()) {
+       bot.isDj(function(result) {
+          if(!result){
 	     bot.addDj(function (dummy){
 	       bot.speak("DJing for you!  Type \'Houndbot DJ off\' to make me stop, or \'Houndbot skip\' if you don't like my song.");
 	     });
-       }
+          }
+       });
    }
 
    if(command == "dj off"){
-      if (bot.isDj()) {
+      bot.isDj(function(result) {
+         if(result){
 	    bot.remDj(keys.USERID, function (dummy){
 	       bot.speak("Stepping down.");
 	    });
-      }
+         }
+      });
    }
 
    if(command == "skip"){
-      if (bot.isDj()) {
+      bot.isDj(function(result) {
+         if(result){
 	    bot.skip(function (dummy){
 	       bot.speak("Skipping song.");
 	    });
-      }
+         }
+      });
    }
 
    if(command == "help"){
