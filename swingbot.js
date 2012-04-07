@@ -11,7 +11,6 @@ Array.prototype.contains = function(element) {
 };
 
 
-//TODO combine into one if possible
 bot.isDj = function(callback) {
     var result = false;
     this.roomInfo(function(data) {
@@ -40,7 +39,7 @@ bot.on('registered', function(data){
       db.get(Query, function(err, sqldata){
          if(typeof(sqldata) != "undefined"){
             if(sqldata.banned){
-               bot.bootUser(data.user[0].userid, "Banned");
+               bot.bootUser(data.user[0].userid, "Autobanned");
             }
          }
       });
@@ -107,24 +106,32 @@ bot.on('speak', function (data) {
    }
 
    if(command.match(/^ban /)){
-      var ban_username = command.replace(/^ban\s+/, '').replace(/\s/g, '');
-
-      bot.roomInfo(false, function(roomInfo){
-         if(roomInfo.room.metadata.moderator_id.contains(data.userid)){
-            //Moderator is speaking, add to ban list
-            var idx = 0;
-            for(; idx < roomInfo.users.length && 
-                roomInfo.users[idx].name.toLowerCase() != ban_username; idx++);
-            if(idx < roomInfo.users.length){
-               var Query1 = "INSERT OR IGNORE INTO users (id, banned) VALUES ('" + 
-                              roomInfo.users[idx].userid + "', 1);";
-               var Query2 = "UPDATE users SET banned = 1 WHERE id = '" +
-                              roomInfo.users[idx].userid + "';";
-               db.exec(Query1 + Query2);
-               bot.bootUser(roomInfo.users[idx].userid, "Banned");
-            }
+      var list = command.match(/[^"]+(?=(" ")|"$)/g);
+      if(list != null){
+         var ban_username = list[0];
+         var reason = "Autobanned"
+         if(list.length > 1){
+            reason = list[1];
          }
-      });
+
+         bot.roomInfo(false, function(roomInfo){ 
+            if(roomInfo.room.metadata.moderator_id.contains(data.userid)){
+               //Moderator is speaking, add to ban list
+               var idx = 0;
+               for(; idx < roomInfo.users.length && 
+                   roomInfo.users[idx].name.toLowerCase() != ban_username; idx++);
+               if(idx < roomInfo.users.length){
+                  console.log("Found" + roomInfo.users[idx].name);
+                  var Query1 = "INSERT OR IGNORE INTO users (id, banned) VALUES ('" + 
+                                 roomInfo.users[idx].userid + "', 1);";
+                  var Query2 = "UPDATE users SET banned = 1 WHERE id = '" +
+                                 roomInfo.users[idx].userid + "';";
+                  db.exec(Query1 + Query2);
+                  bot.bootUser(roomInfo.users[idx].userid, "Banned");
+               }
+            }
+         });
+      }
    }
 
    }
